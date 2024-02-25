@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title%} Home Page {% endblock %}
+
+
+{% block body%}
+
+{% with messages = get_flashed_messages() %}
+   {% if messages %}
+      {% for message in messages %}
+      <div class="container d-flex justify-content-center">
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      </div>
+      {% endfor %}
+   {% endif %}
+{% endwith %}
+
+<div class ="container d-flex justify-content-center">
+  <h1 >{{name}}</h1>
+</div>
+
+<div class="container px-4 ">
+  <table class="table">
+      <thead>
+        <tr>
+          <th scope="col" class="col">Name</th>
+          <th scope="col" class="col">Current Price</th>
+          <th scope="col" class="col">Lowest Price</th>
+          <th scope="col" class="col-2">Size</th>
+          <th scope="col" class="col-2">Product URL</th>
+        </tr>
+        <tbody>
+          {% for link in links %}
+          <tr>
+            <td class="col">{{link.product_name}}</td>
+            {% if link.price|int < link.lowest_price|int %}
+              <td id="price" class="col green fw-semibold"> {{link.price}}</td>
+            {% elif link.price|int > link.lowest_price|int %}
+              <td id="price" class="col red fw-semibold"> {{link.price}}</td>
+            {% else %}
+              <td id="price" class="col"> {{link.price}}</td>
+            {% endif %}
+            <td class="col" id="lowest">{{link.lowest_price}}</td>
+            <td class="col-2">{{link.size}}</td>
+            <td class="col-2"><a href="{{link.url}}" target="_blank">{{link.url}}</a></td>
+            <td>
+              <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#{{link.url}}">
+                Remove
+              </button>
+            </td>
+            <div class="modal fade" id="{{link.url}}" tabindex="-1" aria-labelledby="remove" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="{{link.url}}">Remove saved URL</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    Are you sure to remove the saved product search?
+                  </div>
+                  <form action="/remove" method="post">
+                    <input type="hidden" id="remove_url" name="remove_url" value="{{link.url}}">
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-danger">Remove</button>
+                      </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </tr>
+          {% endfor %}
+        </tbody>
+  </table>
+</div>
+<div class="container d-flex justify-content-center">
+  <form action="/refresh" method="post">
+      <button type="submit" class="btn btn-primary">Refresh all searches</button>
+  </form>
+</div>
+
+{% endblock %}
