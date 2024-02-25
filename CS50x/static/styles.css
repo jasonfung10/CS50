@@ -1,0 +1,19 @@
+
+
+footer{
+    position: relative;
+    text-align: left;
+    margin: 0.5rem;
+}
+
+h1{
+    text-align: center;
+}
+
+.green{
+    color:green;
+}
+
+.red{
+    color:red;
+}
